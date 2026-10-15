@@ -14,6 +14,7 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le pr
 ### Modifié
 
 - La carte n'affiche plus le graphe de liaisons entre provinces.
+- Le navigateur revalide les fichiers de l'interface à chaque chargement : une mise à jour est visible immédiatement, sans vider le cache.
 
 ## [0.1.0] - 2026-10-15
 
