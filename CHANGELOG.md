@@ -9,6 +9,7 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le pr
 
 - Fond de carte géographique : côtes et frontières réelles (Natural Earth, domaine public), îles, mers, provinces colorées selon le propriétaire de leur centre.
 - Script `npm run build:map` pour régénérer le fond de carte.
+- Résumé des règles : présenté à chaque joueur au début de la partie, et consultable à tout moment avec le bouton « Règles » de la barre supérieure.
 
 ### Modifié
 

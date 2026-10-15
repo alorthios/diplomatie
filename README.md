@@ -20,6 +20,7 @@ L'action se déroule en Europe en 1901, entre sept puissances, sans dé ni hasar
 - **Suivi de partie** :
   - historique de chaque phase, avec la carte, les ordres de tous les joueurs et leurs résultats ;
   - vote de match nul ;
+  - résumé des règles présenté au début de la partie, puis accessible à tout moment ;
   - interface adaptée au mobile, avec thème sombre.
 
 ## Installation

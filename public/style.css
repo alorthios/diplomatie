@@ -90,6 +90,12 @@ a { color: inherit; }
 #usernav { display: flex; align-items: center; gap: .8rem; font-size: .9rem; }
 #usernav .muted { color: #b9b3a2; }
 #usernav .link { color: #efe8d8; }
+.brand { white-space: nowrap; }
+@media (max-width: 480px) {
+  .topbar { gap: .6rem; }
+  #usernav { gap: .55rem; }
+  #usernav .muted { display: none; }
+}
 
 main { max-width: 1560px; margin: 0 auto; padding: 1rem; padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
 
@@ -139,6 +145,13 @@ button.link { background: none; border: none; padding: .2rem; min-height: 0; tex
 
 dialog { color: var(--ink); max-width: 360px; width: calc(100% - 2rem); }
 dialog::backdrop { background: rgba(0,0,0,.45); }
+dialog.rules { max-width: 640px; max-height: 85vh; overflow-y: auto; padding-bottom: 0; }
+dialog.rules h3 { margin-bottom: .3em; }
+dialog.rules p, dialog.rules ul { margin: .3em 0 .6em; }
+dialog.rules ul { padding-left: 1.2rem; }
+dialog.rules li { margin: .2em 0; }
+dialog.rules .intro { background: color-mix(in srgb, var(--accent) 14%, transparent); border-radius: 8px; padding: .6rem .8rem; }
+dialog.rules .sticky-actions { justify-content: flex-end; margin-top: 0; border-top: 1px solid var(--line); }
 
 /* ---- Connexion ---- */
 .login { max-width: 380px; margin: 3rem auto; }
