@@ -37,7 +37,9 @@ function createApp() {
     res.json({ status: 'ok', version: pkg.version });
   }));
 
-  app.use(express.static(path.join(__dirname, '..', 'public'), { maxAge: '1h' }));
+  // Revalidation à chaque chargement (304 si inchangé) : après une mise à jour,
+  // le navigateur ne mélange pas d'anciens et de nouveaux fichiers de l'interface.
+  app.use(express.static(path.join(__dirname, '..', 'public'), { setHeaders: (res) => res.set('Cache-Control', 'no-cache') }));
   app.use(express.json({ limit: '32kb' }));
 
   // Protection CSRF : les requêtes qui modifient l'état doivent être en JSON

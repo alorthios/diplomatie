@@ -1,4 +1,5 @@
 import { renderMap, locPoint, POWER_COLORS } from './map.js';
+import { RULES } from './rules.js';
 
 // ------------------------------------------------------------------
 // Utilitaires
@@ -129,7 +130,7 @@ function showFatal(err) {
 }
 
 function renderNav() {
-  $nav.replaceChildren();
+  $nav.replaceChildren(h('button.link', { onclick: () => rulesDialog() }, 'Règles'));
   if (!S.me) return;
   $nav.append(
     h('span.muted', S.me.pseudo),
@@ -209,6 +210,34 @@ function changePinDialog() {
   dlg.addEventListener('close', () => dlg.remove());
   document.body.append(dlg);
   dlg.showModal();
+}
+
+function rulesDialog(intro) {
+  const close = h('button.primary', { type: 'button', onclick: () => dlg.close() }, intro ? 'C\'est parti !' : 'Fermer');
+  const dlg = h('dialog.card.rules',
+    h('h2', 'Règles du jeu'),
+    intro ? h('p.intro', 'La partie commence ! Voici l\'essentiel des règles. Vous pourrez les revoir à tout moment avec le bouton « Règles » en haut de l\'écran.') : null,
+    RULES.map((s) => h('section',
+      h('h3', s.title),
+      s.body.map((b) => Array.isArray(b) ? h('ul', b.map((li) => h('li', li))) : h('p', b)))),
+    h('div.row.sticky-actions', close));
+  dlg.addEventListener('close', () => dlg.remove());
+  document.body.append(dlg);
+  dlg.showModal();
+  close.focus();
+}
+
+/** Au premier affichage d'une partie lancée, présente les règles au joueur (une fois par partie). */
+const rulesShown = new Set();
+function showRulesOnce() {
+  const key = `diplomatie:regles:${S.gameId}`;
+  if (rulesShown.has(key)) return;
+  rulesShown.add(key);
+  try {
+    if (localStorage.getItem(key)) return;
+    localStorage.setItem(key, '1');
+  } catch { /* stockage indisponible : la mémoire de session suffit */ }
+  if (!document.querySelector('dialog[open]')) rulesDialog(true);
 }
 
 // ------------------------------------------------------------------
@@ -378,6 +407,7 @@ function renderGame() {
   restoreMapScroll(keepScroll);
   updateCountdown();
   renderPlayersBadge();
+  if (v.game.status === 'active' && myPower()) showRulesOnce();
 }
 
 /** Sur petit écran, la carte défile : on garde la position, sinon on centre sur ses unités. */
