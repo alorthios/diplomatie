@@ -1,4 +1,8 @@
 // Rendu SVG schématique de la carte : provinces en nœuds, frontières en liaisons.
+import * as SHAPEDATA from './map-shapes.js';
+
+const { SHAPES, DECOR, BORDERS } = SHAPEDATA;
+
 const NS = 'http://www.w3.org/2000/svg';
 
 export const POWER_COLORS = {
@@ -39,33 +43,27 @@ export function renderMap(svg, map, state, opts = {}) {
     el('path', { d: 'M0,0 L10,5 L0,10 z', fill: color }, m);
   }
 
-  el('rect', { x: 0, y: 0, width: 980, height: 860, class: 'map-sea' }, svg);
+  el('rect', { x: 0, y: 0, width: 980, height: 860, class: 'map-ocean' }, svg);
 
-  // Liaisons
-  const gEdges = el('g', { class: 'map-edges' }, svg);
-  for (const [a, b, kind] of map.edges) {
-    const pa = map.provinces[a];
-    const pb = map.provinces[b];
-    el('line', { x1: pa.x, y1: pa.y, x2: pb.x, y2: pb.y, class: `edge edge-${kind}` }, gEdges);
-  }
+  // Décor : océan et terres hors jeu
+  const gDecor = el('g', { class: 'map-decor' }, svg);
+  el('path', { d: DECOR.sea.join(''), class: 'decor-sea' }, gDecor);
+  el('path', { d: DECOR.land.join(''), class: 'decor-land' }, gDecor);
 
-  // Provinces
+  // Territoires : mers d'abord, terres ensuite (les côtes passent par-dessus)
   const gProv = el('g', { class: 'map-provinces' }, svg);
-  for (const p of Object.values(map.provinces)) {
+  const ordered = Object.values(map.provinces).sort((a, b) => (a.type === 'sea') === (b.type === 'sea') ? 0 : a.type === 'sea' ? -1 : 1);
+  for (const p of ordered) {
     const g = el('g', { class: 'prov', 'data-prov': p.id, tabindex: opts.onClick ? 0 : null }, gProv);
     const owner = p.sc ? state.centers[p.id] : null;
-    const classes = ['node', `node-${p.type}`];
-    if (opts.targets && opts.targets.has(p.id)) classes.push('node-target');
-    if (opts.selected && provOf(opts.selected) === p.id) classes.push('node-selected');
-    const r = p.type === 'sea' ? 20 : 17;
-    const node = el('circle', { cx: p.x, cy: p.y, r, class: classes.join(' ') }, g);
-    if (owner) node.style.setProperty('--owner', POWER_COLORS[owner]);
-    if (owner) node.classList.add('node-owned');
-    if (p.sc) {
-      el('circle', { cx: p.x + 13, cy: p.y - 13, r: 4.5, class: 'sc-dot', fill: owner ? POWER_COLORS[owner] : '#f4ecd8' }, g);
+    const classes = ['terr', p.type === 'sea' ? 'terr-sea' : 'terr-land'];
+    if (opts.targets && opts.targets.has(p.id)) classes.push('terr-target');
+    if (opts.selected && provOf(opts.selected) === p.id) classes.push('terr-selected');
+    const shape = el('path', { d: SHAPES[p.id], class: classes.join(' ') }, g);
+    if (owner) {
+      shape.style.setProperty('--owner', POWER_COLORS[owner]);
+      shape.classList.add('terr-owned');
     }
-    const t = el('text', { x: p.x, y: p.y + r + 11, class: `label label-${p.type}` }, g);
-    t.textContent = p.id;
     const title = el('title', {}, g);
     title.textContent = `${p.name}${p.sc ? ' (centre)' : ''}${owner ? ` — ${map.powerNames[owner]}` : ''}`;
     if (opts.onClick) {
@@ -74,12 +72,38 @@ export function renderMap(svg, map, state, opts = {}) {
     }
   }
 
+  // Frontières et côtes
+  const gBorders = el('g', { class: 'map-borders' }, svg);
+  el('path', { d: BORDERS.sea, class: 'border-sea' }, gBorders);
+  el('path', { d: BORDERS.land, class: 'border-land' }, gBorders);
+  el('path', { d: BORDERS.coast, class: 'border-coast' }, gBorders);
+
+  // Étiquettes et centres (au-dessus de tous les territoires)
+  const gLabels = el('g', { class: 'map-labels' }, svg);
+  for (const p of Object.values(map.provinces)) {
+    const owner = p.sc ? state.centers[p.id] : null;
+    if (p.sc) {
+      el('circle', { cx: p.x, cy: p.y + 15, r: 5, class: 'sc-dot', fill: owner ? POWER_COLORS[owner] : '#f4ecd8' }, gLabels);
+      el('circle', { cx: p.x, cy: p.y + 15, r: 2, class: 'sc-core' }, gLabels);
+    }
+    const t = el('text', { x: p.x, y: p.y - 15, class: `label label-${p.type}` }, gLabels);
+    t.textContent = p.id;
+  }
+
   // Côtes multiples
   for (const coasts of Object.values(map.coasts)) {
     for (const [c, [x, y]] of Object.entries(coasts)) {
-      el('circle', { cx: x, cy: y, r: 3, class: 'coast-dot' }, gProv);
-      const t = el('text', { x, y: y - 6, class: 'coast-label' }, gProv);
+      el('circle', { cx: x, cy: y, r: 3, class: 'coast-dot' }, gLabels);
+      const t = el('text', { x, y: y - 6, class: 'coast-label' }, gLabels);
       t.textContent = c;
+    }
+  }
+
+  if (SHAPEDATA.SITES) {
+    for (const [id, x, y] of SHAPEDATA.SITES) {
+      el('circle', { cx: x, cy: y, r: 2.5, fill: '#c00' }, gLabels);
+      const t = el('text', { x: x + 3, y: y - 3, style: 'font: 7px sans-serif; fill: #c00' }, gLabels);
+      t.textContent = id;
     }
   }
 

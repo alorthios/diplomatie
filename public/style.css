@@ -9,9 +9,15 @@
   --primary: #1d2a33;
   --danger: #a8322b;
   --ok: #2f7a3e;
-  --sea: #b9cfd6;
-  --sea-node: #a3c0ca;
-  --land: #e9dfc6;
+  --sea: #93b5bb;
+  --sea-prov: #adc9cb;
+  --coast: #4d5a5e;
+  --sea-border: #7fa3b2;
+  --sea-ink: #3f6676;
+  --land: #ece2c6;
+  --offmap: #d3c8ad;
+  --border: #6f6450;
+  --label-halo: rgba(250,246,236,.85);
   --edge: #8a8a80;
   --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -32,9 +38,15 @@
     --accent: #d2a24f;
     --accent-ink: #161c20;
     --primary: #c9a24a;
-    --sea: #243840;
-    --sea-node: #2d4650;
-    --land: #4a4436;
+    --sea: #1b2d35;
+    --sea-prov: #223a44;
+    --coast: #9fb6bd;
+    --sea-border: #3d5f6c;
+    --sea-ink: #8fb3c1;
+    --land: #4d4637;
+    --offmap: #34302a;
+    --border: #8e8470;
+    --label-halo: rgba(22,28,32,.8);
     --edge: #7c7a70;
     color-scheme: dark;
   }
@@ -161,25 +173,30 @@ dialog::backdrop { background: rgba(0,0,0,.45); }
 svg.map { display: block; width: 100%; height: auto; touch-action: manipulation; }
 .legend { display: flex; flex-wrap: wrap; gap: .2rem .8rem; padding: .5rem .8rem; font-size: .8rem; border-top: 1px solid var(--line); }
 
-.map-sea { fill: var(--sea); }
-.edge { stroke: var(--edge); stroke-width: 1; opacity: .35; }
-.edge-sea { stroke-dasharray: 3 3; }
-.node { stroke: var(--edge); stroke-width: 1; }
-.node-sea { fill: var(--sea-node); stroke-dasharray: 2 2; }
-.node-land, .node-coast { fill: var(--land); }
-.node-coast { stroke-width: 1.6; }
-.node-owned { fill: color-mix(in srgb, var(--owner) 45%, var(--land)); }
-.mapscroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-@media (max-width: 700px) { svg.map { width: 680px; max-width: none; } }
-.node-target { stroke: var(--accent); stroke-width: 3.5; stroke-dasharray: none; }
-.node-selected { stroke: var(--ink); stroke-width: 3; }
-.prov { cursor: default; }
+.map-ocean { fill: var(--sea); }
+.decor-sea { fill: var(--sea); }
+.decor-land { fill: var(--offmap); }
+.terr { transition: fill .15s; }
+.terr-sea { fill: var(--sea-prov); }
+.terr-land { fill: var(--land); }
+.terr-owned { fill: color-mix(in srgb, var(--owner) 55%, var(--land)); }
+.terr-sea.terr-target { fill: color-mix(in srgb, var(--accent) 30%, var(--sea-prov)); }
+.terr-land.terr-target { fill: color-mix(in srgb, var(--accent) 35%, var(--land)); }
+.terr-owned.terr-target { fill: color-mix(in srgb, var(--accent) 35%, color-mix(in srgb, var(--owner) 55%, var(--land))); }
+.terr-selected { fill: color-mix(in srgb, var(--ink) 18%, var(--land)) !important; }
+.map-borders { pointer-events: none; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+.border-sea { stroke: var(--sea-border); stroke-width: 1; stroke-dasharray: 2 4; }
+.border-land { stroke: var(--border); stroke-width: 1; opacity: .7; }
+.border-coast { stroke: var(--coast); stroke-width: 1.8; }
 svg.map .prov[tabindex] { cursor: pointer; }
+svg.map .prov[tabindex]:hover .terr { filter: brightness(1.08); }
 .prov:focus { outline: none; }
-.prov:focus .node { stroke: var(--accent); stroke-width: 3; }
-.sc-dot { stroke: var(--ink); stroke-width: 1; }
-.label { font: 600 10px var(--sans); fill: var(--ink); text-anchor: middle; pointer-events: none; }
-.label-sea { font-style: italic; font-weight: 500; fill: var(--muted); }
+.prov:focus .terr { filter: brightness(1.12); }
+.map-labels { pointer-events: none; }
+.sc-dot { stroke: var(--ink); stroke-width: 1.2; }
+.sc-core { fill: var(--ink); }
+.label { font: 700 10.5px var(--sans); fill: var(--ink); text-anchor: middle; paint-order: stroke; stroke: var(--label-halo); stroke-width: 3px; letter-spacing: .02em; }
+.label-sea { font-style: italic; font-weight: 500; fill: var(--sea-ink); stroke: none; }
 .coast-dot { fill: var(--edge); }
 .coast-label { font: 8px var(--sans); fill: var(--muted); text-anchor: middle; pointer-events: none; }
 .unit-shape { stroke: #fff; stroke-width: 1.5; }
