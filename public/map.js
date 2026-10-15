@@ -75,7 +75,7 @@ export function renderMap(svg, map, state, opts = {}) {
   }
 
   // Côtes multiples
-  for (const [p, coasts] of Object.entries(map.coasts)) {
+  for (const coasts of Object.values(map.coasts)) {
     for (const [c, [x, y]] of Object.entries(coasts)) {
       el('circle', { cx: x, cy: y, r: 3, class: 'coast-dot' }, gProv);
       const t = el('text', { x, y: y - 6, class: 'coast-label' }, gProv);
