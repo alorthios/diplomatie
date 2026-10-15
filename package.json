@@ -1,6 +1,6 @@
 {
   "name": "diplomatie",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Jeu de Diplomatie multijoueur en ligne, auto-hébergé avec Docker",
   "main": "src/server.js",
