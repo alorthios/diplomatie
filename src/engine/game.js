@@ -330,6 +330,10 @@ function resolveMovement(s, ordersByPower) {
     report.push({
       power: o.power, text: describeOrder(o), result: r.result, detail: r.detail,
       dislodged: !!r.dislodged, defaulted: !!o.defaulted,
+      order: {
+        kind: o.kind, loc: o.loc, dest: o.destLoc, supTarget: o.supTarget,
+        supDest: o.supDest, cvFrom: o.cvFrom, cvTo: o.cvTo,
+      },
     });
   }
   s.units = out.units;
@@ -364,11 +368,11 @@ function resolveRetreats(s, ordersByPower) {
       continue;
     }
     if (targets[M.prov(o.to)].length > 1) {
-      report.push({ power: d.power, text: `${name} R ${o.to}`, result: 'fail', detail: 'bounce' });
+      report.push({ power: d.power, text: `${name} R ${o.to}`, result: 'fail', detail: 'bounce', order: { kind: 'R', loc: d.loc, dest: o.to } });
       continue;
     }
     s.units.push({ power: d.power, type: d.type, loc: o.to });
-    report.push({ power: d.power, text: `${name} R ${o.to}`, result: 'ok' });
+    report.push({ power: d.power, text: `${name} R ${o.to}`, result: 'ok', order: { kind: 'R', loc: d.loc, dest: o.to } });
   }
   const from = phaseName(s);
   s.dislodged = [];
