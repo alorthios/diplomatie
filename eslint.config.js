@@ -3,7 +3,7 @@ const js = require('@eslint/js');
 const globals = require('globals');
 
 module.exports = [
-  { ignores: ['node_modules/'] },
+  { ignores: ['node_modules/', 'public/map-shapes.js'] },
   js.configs.recommended,
   {
     files: ['src/**/*.js', 'test/**/*.js', 'eslint.config.js'],
@@ -12,6 +12,10 @@ module.exports = [
   {
     files: ['public/**/*.js'],
     languageOptions: { sourceType: 'module', ecmaVersion: 2023, globals: { ...globals.browser } },
+  },
+  {
+    files: ['scripts/**/*.mjs'],
+    languageOptions: { sourceType: 'module', ecmaVersion: 2023, globals: { ...globals.node } },
   },
   {
     rules: {
