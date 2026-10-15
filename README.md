@@ -131,7 +131,9 @@ Les règles de contribution (commits, branches, releases) sont décrites dans [C
 
 ## Limites connues
 
-- Le fond de carte est généré (diagramme de Voronoï autour des provinces, `npm run build:map`) : la géographie est stylisée, pas une reproduction fidèle de l'Europe.
+- Les côtes et frontières entre pays sont réelles (frontières actuelles, pas celles de 1914) ; les limites entre provinces d'un même pays sont approchées.
 - Pas de notifications par e-mail ou push : l'échéance s'affiche dans l'interface.
+
+Fond de carte : [Natural Earth](https://www.naturalearthdata.com/) (domaine public), généré par `npm run build:map`.
 
 *Diplomacy est une marque déposée de Hasbro. Ce projet est une implémentation amateur indépendante des règles, destinée à un usage privé.*

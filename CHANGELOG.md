@@ -7,8 +7,8 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le pr
 
 ### Ajouté
 
-- Fond de carte : territoires dessinés, mers, côtes et îles, provinces colorées selon le propriétaire de leur centre.
-- Script `npm run build:map` pour régénérer les contours.
+- Fond de carte géographique : côtes et frontières réelles (Natural Earth, domaine public), îles, mers, provinces colorées selon le propriétaire de leur centre.
+- Script `npm run build:map` pour régénérer le fond de carte.
 
 ### Modifié
 
