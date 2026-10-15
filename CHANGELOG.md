@@ -15,6 +15,15 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le pr
 
 - La carte n'affiche plus le graphe de liaisons entre provinces.
 - Le navigateur revalide les fichiers de l'interface à chaque chargement : une mise à jour est visible immédiatement, sans vider le cache.
+- Interface modernisée, en clair comme en sombre :
+  - cartes ombrées, onglets en sélecteur segmenté, listes de parties cliquables, messages en bulles ;
+  - barre supérieure translucide et nouvel écran de connexion ;
+  - unité sélectionnée mise en évidence dans la liste des ordres.
+
+### Corrigé
+
+- Une ligne d'ordre sélectionnée et la puissance choisie dans le salon perdaient leur mise en page.
+- Un fragment de la notification restait visible en bas de l'écran.
 
 ## [0.1.0] - 2026-10-15
 

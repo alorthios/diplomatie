@@ -179,6 +179,7 @@ function renderLogin() {
       }
     },
   },
+  h('div.login-mark', { 'aria-hidden': 'true' }, '◆'),
   h('h1', 'Diplomatie'),
   h('p.muted', 'Europe, 1901. Sept puissances, aucune chance, toutes les trahisons.'),
   h('label', { for: 'pseudo' }, 'Pseudo'), pseudo,
