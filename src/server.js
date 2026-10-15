@@ -114,7 +114,6 @@ function createApp() {
   // Application monopage
   app.get('/{*splat}', (_req, res) => res.sendFile(path.join(__dirname, '..', 'public', 'index.html')));
 
-  // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, _next) => {
     if (err.type === 'entity.parse.failed') err = new HttpError(400, 'JSON invalide.');
     const status = err.status || 500;
