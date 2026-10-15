@@ -121,6 +121,7 @@ src/
   server.js              API HTTP (Express) et service de l'interface
 migrations/              Schéma SQL versionné
 public/                  Interface web (JavaScript sans framework)
+scripts/build-map.mjs    Génération du fond de carte (public/map-shapes.js)
 test/                    Tests (node:test)
 ```
 
@@ -130,7 +131,7 @@ Les règles de contribution (commits, branches, releases) sont décrites dans [C
 
 ## Limites connues
 
-- La carte est schématique : les provinces sont des nœuds reliés par leurs frontières, et non des territoires dessinés.
+- Le fond de carte est généré (diagramme de Voronoï autour des provinces, `npm run build:map`) : la géographie est stylisée, pas une reproduction fidèle de l'Europe.
 - Pas de notifications par e-mail ou push : l'échéance s'affiche dans l'interface.
 
 *Diplomacy est une marque déposée de Hasbro. Ce projet est une implémentation amateur indépendante des règles, destinée à un usage privé.*

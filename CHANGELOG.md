@@ -5,6 +5,15 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le pr
 
 ## [Non publié]
 
+### Ajouté
+
+- Fond de carte : territoires dessinés, mers, côtes et îles, provinces colorées selon le propriétaire de leur centre.
+- Script `npm run build:map` pour régénérer les contours.
+
+### Modifié
+
+- La carte n'affiche plus le graphe de liaisons entre provinces.
+
 ## [0.1.0] - 2026-10-15
 
 ### Ajouté
