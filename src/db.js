@@ -6,6 +6,8 @@ const config = require('./config');
 const log = require('./log');
 
 const pool = new Pool({ connectionString: config.databaseUrl, max: 10 });
+// Une connexion inactive perdue (redémarrage de PostgreSQL…) ne doit pas faire tomber le serveur
+pool.on('error', (err) => log.warn('Connexion PostgreSQL perdue', { err: err.message }));
 
 /** Exécute fn(client) dans une transaction. */
 async function tx(fn) {
