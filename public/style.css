@@ -9,14 +9,16 @@
   --primary: #1d2a33;
   --danger: #a8322b;
   --ok: #2f7a3e;
-  --sea: #93b5bb;
-  --sea-prov: #adc9cb;
-  --coast: #4d5a5e;
-  --sea-border: #7fa3b2;
-  --sea-ink: #3f6676;
-  --land: #ece2c6;
-  --offmap: #d3c8ad;
-  --border: #6f6450;
+  --sea: #a9c8d3;
+  --sea-prov: #b9d3dc;
+  --coast: #44585f;
+  --sea-border: #86aab8;
+  --sea-ink: #4a7282;
+  --land: #efe6cc;
+  --offmap: #dcd4bf;
+  --offmap-border: #c4baa0;
+  --sc-free: #fbf7ee;
+  --border: #9a8d70;
   --label-halo: rgba(250,246,236,.85);
   --edge: #8a8a80;
   --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
@@ -38,14 +40,16 @@
     --accent: #d2a24f;
     --accent-ink: #161c20;
     --primary: #c9a24a;
-    --sea: #1b2d35;
-    --sea-prov: #223a44;
-    --coast: #9fb6bd;
-    --sea-border: #3d5f6c;
-    --sea-ink: #8fb3c1;
-    --land: #4d4637;
-    --offmap: #34302a;
-    --border: #8e8470;
+    --sea: #1a2b33;
+    --sea-prov: #20363f;
+    --coast: #a3b9bf;
+    --sea-border: #3a5a66;
+    --sea-ink: #86aab8;
+    --land: #4a4436;
+    --offmap: #2f2c26;
+    --offmap-border: #3d3930;
+    --sc-free: #e8e2d4;
+    --border: #77705e;
     --label-halo: rgba(22,28,32,.8);
     --edge: #7c7a70;
     color-scheme: dark;
@@ -87,7 +91,7 @@ a { color: inherit; }
 #usernav .muted { color: #b9b3a2; }
 #usernav .link { color: #efe8d8; }
 
-main { max-width: 1280px; margin: 0 auto; padding: 1rem; padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+main { max-width: 1560px; margin: 0 auto; padding: 1rem; padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
 
 /* ---- Composants ---- */
 .card {
@@ -167,7 +171,7 @@ dialog::backdrop { background: rgba(0,0,0,.45); }
 .banner { background: var(--accent); color: var(--accent-ink); padding: .7rem 1rem; border-radius: 8px; margin-bottom: 1rem; font-weight: 600; }
 
 .gamegrid { display: grid; gap: 1rem; grid-template-columns: 1fr; }
-@media (min-width: 1000px) { .gamegrid { grid-template-columns: minmax(0, 1fr) 420px; align-items: start; } .mapwrap { position: sticky; top: 4rem; } }
+@media (min-width: 1000px) { .gamegrid { grid-template-columns: minmax(0, 1fr) 400px; align-items: start; } .mapwrap { position: sticky; top: 4rem; } }
 
 .mapwrap { background: var(--card); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
 svg.map { display: block; width: 100%; height: auto; touch-action: manipulation; }
@@ -175,30 +179,27 @@ svg.map { display: block; width: 100%; height: auto; touch-action: manipulation;
 
 .map-ocean { fill: var(--sea); }
 .decor-sea { fill: var(--sea); }
-.decor-land { fill: var(--offmap); }
-.terr { transition: fill .15s; }
-.terr-sea { fill: var(--sea-prov); }
-.terr-land { fill: var(--land); }
-.terr-owned { fill: color-mix(in srgb, var(--owner) 55%, var(--land)); }
+.decor-land { fill: var(--offmap); stroke: var(--offmap-border); stroke-width: .5; }
+.terr { stroke-linejoin: round; transition: fill .15s; }
+.terr-sea { fill: var(--sea-prov); stroke: var(--sea-border); stroke-width: .8; stroke-dasharray: 2 3; }
+.terr-land { fill: var(--land); stroke: var(--border); stroke-width: .7; }
+.terr-owned { fill: color-mix(in srgb, var(--owner) 52%, var(--land)); }
 .terr-sea.terr-target { fill: color-mix(in srgb, var(--accent) 30%, var(--sea-prov)); }
 .terr-land.terr-target { fill: color-mix(in srgb, var(--accent) 35%, var(--land)); }
-.terr-owned.terr-target { fill: color-mix(in srgb, var(--accent) 35%, color-mix(in srgb, var(--owner) 55%, var(--land))); }
-.terr-selected { fill: color-mix(in srgb, var(--ink) 18%, var(--land)) !important; }
-.map-borders { pointer-events: none; fill: none; stroke-linejoin: round; stroke-linecap: round; }
-.border-sea { stroke: var(--sea-border); stroke-width: 1; stroke-dasharray: 2 4; }
-.border-land { stroke: var(--border); stroke-width: 1; opacity: .7; }
-.border-coast { stroke: var(--coast); stroke-width: 1.8; }
+.terr-owned.terr-target { fill: color-mix(in srgb, var(--accent) 35%, color-mix(in srgb, var(--owner) 52%, var(--land))); }
+.terr-selected { fill: color-mix(in srgb, var(--ink) 20%, var(--land)) !important; }
+.coastline { fill: none; stroke: var(--coast); stroke-width: 1.1; stroke-linejoin: round; pointer-events: none; }
 svg.map .prov[tabindex] { cursor: pointer; }
 svg.map .prov[tabindex]:hover .terr { filter: brightness(1.08); }
 .prov:focus { outline: none; }
 .prov:focus .terr { filter: brightness(1.12); }
 .map-labels { pointer-events: none; }
-.sc-dot { stroke: var(--ink); stroke-width: 1.2; }
+.sc-dot { stroke: var(--ink); stroke-width: 1; }
 .sc-core { fill: var(--ink); }
-.label { font: 700 10.5px var(--sans); fill: var(--ink); text-anchor: middle; paint-order: stroke; stroke: var(--label-halo); stroke-width: 3px; letter-spacing: .02em; }
-.label-sea { font-style: italic; font-weight: 500; fill: var(--sea-ink); stroke: none; }
-.coast-dot { fill: var(--edge); }
-.coast-label { font: 8px var(--sans); fill: var(--muted); text-anchor: middle; pointer-events: none; }
+.label { font: 700 11px var(--sans); fill: var(--ink); text-anchor: middle; paint-order: stroke; stroke: var(--label-halo); stroke-width: 2.6px; letter-spacing: .03em; }
+.label-sea { font-style: italic; font-weight: 600; fill: var(--sea-ink); stroke: none; letter-spacing: .08em; }
+.coast-dot { fill: var(--coast); }
+.coast-label { font: 600 7px var(--sans); fill: var(--muted); text-anchor: middle; pointer-events: none; }
 .unit-shape { stroke: #fff; stroke-width: 1.5; }
 .unit-mast { stroke: #fff; stroke-width: 1.5; }
 .unit-letter { font: 700 11px var(--sans); fill: #fff; text-anchor: middle; pointer-events: none; }
@@ -206,7 +207,7 @@ svg.map .prov[tabindex]:hover .terr { filter: brightness(1.08); }
 .unit-selected .unit-shape { stroke: var(--accent); stroke-width: 3; }
 .unit-dislodged { opacity: .8; }
 .unit-dislodged .unit-shape { stroke: var(--danger); stroke-width: 2.5; stroke-dasharray: 3 2; }
-.arrow { stroke-width: 3.2; fill: none; stroke-linecap: round; }
+.arrow { stroke-width: 3; fill: none; stroke-linecap: round; }
 .arrow-support { stroke-dasharray: 6 4; stroke-width: 2.2; }
 .arrow-convoy { stroke-dasharray: 1 5; stroke-width: 3; }
 .arrow-retreat { stroke-dasharray: 8 3; }
@@ -272,3 +273,7 @@ ol.history .active { font-weight: 700; }
 .msg-head { font-size: .82rem; }
 .msg-body { white-space: pre-wrap; word-break: break-word; }
 .msgform { display: grid; grid-template-columns: 1fr auto; gap: .5rem; margin-top: .5rem; align-items: end; }
+
+/* Carte : sur petit écran, plus large que l'écran avec défilement horizontal */
+.mapscroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+@media (max-width: 700px) { svg.map { width: 920px; max-width: none; } }
