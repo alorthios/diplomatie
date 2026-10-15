@@ -21,7 +21,7 @@ L'action se déroule en Europe en 1901, entre sept puissances, sans dé ni hasar
   - historique de chaque phase, avec la carte, les ordres de tous les joueurs et leurs résultats ;
   - vote de match nul ;
   - résumé des règles présenté au début de la partie, puis accessible à tout moment ;
-  - interface adaptée au mobile, avec thème sombre.
+  - interface sombre, avec carte plein écran sur ordinateur, adaptée au mobile.
 
 ## Installation
 
@@ -136,5 +136,7 @@ Les règles de contribution (commits, branches, releases) sont décrites dans [C
 - Pas de notifications par e-mail ou push : l'échéance s'affiche dans l'interface.
 
 Fond de carte : [Natural Earth](https://www.naturalearthdata.com/) (domaine public), généré par `npm run build:map`.
+
+Police : [Inter](https://rsms.me/inter/) (licence SIL Open Font License, voir `public/fonts/Inter-LICENSE.txt`), servie par l'application.
 
 *Diplomacy est une marque déposée de Hasbro. Ce projet est une implémentation amateur indépendante des règles, destinée à un usage privé.*

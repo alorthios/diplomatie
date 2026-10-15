@@ -5,8 +5,8 @@ const { VIEW, SHAPES, DECOR, COAST, POS, COAST_POS } = SHAPEDATA;
 const NS = 'http://www.w3.org/2000/svg';
 
 export const POWER_COLORS = {
-  ENG: '#3a5bbf', FRA: '#4aa3df', GER: '#5b5f66', ITA: '#3f9b4a',
-  AUS: '#c8423b', RUS: '#8a5cc2', TUR: '#d6a11e',
+  ENG: '#5b7cff', FRA: '#38bdf8', GER: '#94a3b8', ITA: '#34d399',
+  AUS: '#f87171', RUS: '#a78bfa', TUR: '#fbbf24',
 };
 
 function el(name, attrs = {}, parent) {
@@ -37,7 +37,7 @@ export function renderMap(svg, map, state, opts = {}) {
   svg.setAttribute('aria-label', 'Carte de l\'Europe');
 
   const defs = el('defs', {}, svg);
-  for (const [pw, color] of Object.entries({ ...POWER_COLORS, X: '#222' })) {
+  for (const [pw, color] of Object.entries({ ...POWER_COLORS, X: '#cbd5e1' })) {
     const m = el('marker', { id: `arrow-${pw}`, viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 4.5, markerHeight: 4.5, orient: 'auto-start-reverse' }, defs);
     el('path', { d: 'M0,0 L10,5 L0,10 z', fill: color }, m);
   }
@@ -135,7 +135,7 @@ function shorten(x1, y1, x2, y2, d1, d2) {
 }
 
 function drawArrow(parent, a) {
-  const color = POWER_COLORS[a.power] || '#222';
+  const color = POWER_COLORS[a.power] || '#cbd5e1';
   const marker = `url(#arrow-${POWER_COLORS[a.power] ? a.power : 'X'})`;
   const [fx, fy] = locPoint(null, a.from);
   if (a.kind === 'hold') {

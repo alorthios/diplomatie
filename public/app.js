@@ -110,6 +110,7 @@ function clearTimers() {
 
 async function route() {
   clearTimers();
+  document.body.classList.remove('in-game');
   if (!S.me) {
     const r = await api('GET', '/api/me');
     S.me = r.user;
@@ -134,7 +135,7 @@ function renderNav() {
   $nav.replaceChildren(h('button.link', { onclick: () => rulesDialog() }, 'Règles'));
   if (!S.me) return;
   $nav.append(
-    h('span.muted', S.me.pseudo),
+    h('span.muted', { 'data-initial': S.me.pseudo[0].toUpperCase() }, S.me.pseudo),
     h('button.link', { onclick: changePinDialog }, 'PIN'),
     h('button.link', {
       onclick: async () => {
@@ -258,6 +259,9 @@ async function renderLobby() {
     list.length ? h('ul.gamelist', list.map(gameItem)) : h('p.muted', empty));
 
   $app.replaceChildren(
+    h('div.pagehead',
+      h('h1', `Bonjour, ${S.me.pseudo}`),
+      h('p.muted', 'Vos parties, et celles qui attendent des joueurs.')),
     h('div.lobby',
       h('div.lobby-main',
         section('Mes parties', mine, 'Vous ne participez à aucune partie en cours.'),
@@ -273,7 +277,7 @@ function gameItem(g) {
   const status = g.status === 'lobby' ? `Salon · ${g.player_count}/7 joueurs`
     : g.status === 'active' ? `${phaseShort(g.phase)}${g.deadline ? ` · échéance ${new Date(g.deadline).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}` : ''}`
       : g.result === 'DRAW' ? 'Match nul' : g.result && S.map.powerNames[g.result] ? `Victoire : ${S.map.powerNames[g.result]}` : 'Terminée';
-  return h('li', h('a', { href: `#/game/${g.id}` },
+  return h('li', h('a', { href: `#/game/${g.id}`, 'data-power': g.my_power || null },
     h('span.gname', g.name),
     g.my_power ? h('span.badge', { 'data-power': g.my_power }, S.map.powerNames[g.my_power]) : null,
     h('span.muted.small', status)));
@@ -380,6 +384,7 @@ function renderGame() {
       v.me && v.me.power ? h('div', h('span.badge', { 'data-power': v.me.power }, S.map.powerNames[v.me.power])) : null) : null);
 
   if (v.game.status === 'lobby') {
+    document.body.classList.remove('in-game');
     $app.replaceChildren(head, renderWaitingRoom());
     return;
   }
@@ -396,15 +401,17 @@ function renderGame() {
   const tabs = [
     ['orders', 'Ordres'], ['players', 'Joueurs'], ['messages', 'Messages'], ['history', 'Historique'],
   ];
-  const tabbar = h('div.tabs', { role: 'tablist' }, tabs.map(([k, label]) => h('button', {
+  const tabbar = h('div.tabs', h('div.tabs-inner', { role: 'tablist' }, tabs.map(([k, label]) => h('button', {
     role: 'tab', 'aria-selected': S.tab === k ? 'true' : 'false', class: S.tab === k ? 'active' : null,
     onclick: () => { S.tab = k; if (k === 'messages') S.unread = 0; renderGame(); },
-  }, label, k === 'messages' && S.unread ? h('span.pill', S.unread) : null, k === 'players' ? h('span#readybadge') : null)));
+  }, label, k === 'messages' && S.unread ? h('span.pill', S.unread) : null, k === 'players' ? h('span#readybadge') : null))));
 
   const panel = h('div.panel', tabbar, h('div.tabbody', renderTab()));
   const prevScroll = document.querySelector('.mapscroll');
   const keepScroll = prevScroll ? prevScroll.scrollLeft : null;
-  $app.replaceChildren(...[head, banner, h('div.gamegrid', mapWrap, panel)].filter(Boolean));
+  // Sur grand écran, la carte occupe tout le cadre et l'en-tête rejoint la colonne latérale (voir style.css).
+  document.body.classList.add('in-game');
+  $app.replaceChildren(h('div.gamegrid', head, banner, h('div.mapstage', mapWrap), panel));
   drawMap();
   restoreMapScroll(keepScroll);
   updateCountdown();

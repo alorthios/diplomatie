@@ -15,10 +15,12 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le pr
 
 - La carte n'affiche plus le graphe de liaisons entre provinces.
 - Le navigateur revalide les fichiers de l'interface à chaque chargement : une mise à jour est visible immédiatement, sans vider le cache.
-- Interface modernisée, en clair comme en sombre :
-  - cartes ombrées, onglets en sélecteur segmenté, listes de parties cliquables, messages en bulles ;
-  - barre supérieure translucide et nouvel écran de connexion ;
+- Nouvelle interface sombre :
+  - police Inter, accents indigo et or, couleurs des puissances et de la carte revues pour le fond sombre ;
+  - sur ordinateur, carte en plein écran avec une colonne latérale pour la partie, les ordres et les messages ;
+  - salon en tuiles, onglets en sélecteur segmenté, messages en bulles, nouvel écran de connexion ;
   - unité sélectionnée mise en évidence dans la liste des ordres.
+- Sur petit écran, la colonne « Unités » du tableau des joueurs est masquée.
 
 ### Corrigé
 
