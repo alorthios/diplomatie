@@ -1,4 +1,4 @@
-import { renderMap, POWER_COLORS } from './map.js';
+import { renderMap, locPoint, POWER_COLORS } from './map.js';
 
 // ------------------------------------------------------------------
 // Utilitaires
@@ -371,10 +371,28 @@ function renderGame() {
   }, label, k === 'messages' && S.unread ? h('span.pill', S.unread) : null, k === 'players' ? h('span#readybadge') : null)));
 
   const panel = h('div.panel', tabbar, h('div.tabbody', renderTab()));
+  const prevScroll = document.querySelector('.mapscroll');
+  const keepScroll = prevScroll ? prevScroll.scrollLeft : null;
   $app.replaceChildren(...[head, banner, h('div.gamegrid', mapWrap, panel)].filter(Boolean));
   drawMap();
+  restoreMapScroll(keepScroll);
   updateCountdown();
   renderPlayersBadge();
+}
+
+/** Sur petit écran, la carte défile : on garde la position, sinon on centre sur ses unités. */
+function restoreMapScroll(previous) {
+  const box = document.querySelector('.mapscroll');
+  const svg = box && box.querySelector('svg');
+  if (!box || box.scrollWidth <= box.clientWidth) return;
+  if (previous !== null) { box.scrollLeft = previous; return; }
+  const state = (S.history || S.view.phase).state;
+  const mine = state.units.filter((u) => u.power === myPower());
+  const list = mine.length ? mine : state.units;
+  if (!list.length) return;
+  const avgX = list.reduce((sum, u) => sum + locPoint(null, u.loc)[0], 0) / list.length;
+  const scale = svg.getBoundingClientRect().width / svg.viewBox.baseVal.width;
+  box.scrollLeft = Math.max(0, avgX * scale - box.clientWidth / 2);
 }
 
 function mapLegend() {
