@@ -24,6 +24,7 @@ function h(tag, attrs, ...children) {
     if (v === undefined || v === null || v === false) continue;
     if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
     else if (k === 'value') e.value = v;
+    else if (k === 'class') e.classList.add(...String(v).split(/\s+/).filter(Boolean));
     else if (v === true) e.setAttribute(k, '');
     else e.setAttribute(k, v);
   }
@@ -1026,7 +1027,7 @@ function channelOf(m) {
 
 function renderMessageList(list) {
   const msgs = S.messages.filter((m) => S.view.game.status === 'finished' || channelOf(m) === S.channel);
-  list.replaceChildren(...(msgs.length ? msgs.map((m) => h('div.msg', { class: m.from_power && m.from_power === myPower() ? 'msg mine' : 'msg' },
+  list.replaceChildren(...(msgs.length ? msgs.map((m) => h('div.msg', { class: m.from_power && m.from_power === myPower() ? 'mine' : null },
     h('div.msg-head',
       m.from_power ? h('span.swatch', { 'data-power': m.from_power }) : null,
       h('strong', m.from_power ? S.map.powerNames[m.from_power] : m.pseudo),
