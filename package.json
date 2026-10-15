@@ -1,0 +1,14 @@
+{
+  "name": "diplomatie",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Jeu de Diplomatie multijoueur en ligne, auto-hébergé avec Docker",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test test/*.test.js",
+    "lint": "eslint ."
+  },
+  "engines": { "node": ">=20" },
+  "license": "MIT"
+}
