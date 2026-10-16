@@ -24,6 +24,7 @@ function h(tag, attrs, ...children) {
     if (v === undefined || v === null || v === false) continue;
     if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
     else if (k === 'value') e.value = v;
+    else if (k === 'class') e.classList.add(...String(v).split(/\s+/).filter(Boolean)); // s'ajoute aux classes du sélecteur
     else if (v === true) e.setAttribute(k, '');
     else e.setAttribute(k, v);
   }
@@ -189,6 +190,21 @@ function renderLogin() {
   pseudo.focus();
 }
 
+/** Demande de confirmation dans une boîte de dialogue de l'interface. Résout vrai si l'action est confirmée. */
+function confirmDialog(message, okLabel, danger = false) {
+  return new Promise((resolve) => {
+    let confirmed = false;
+    const ok = h(danger ? 'button.danger' : 'button.primary', { type: 'button', onclick: () => { confirmed = true; dlg.close(); } }, okLabel);
+    const dlg = h('dialog.card.confirm',
+      h('p', message),
+      h('div.row', h('button', { type: 'button', onclick: () => dlg.close() }, 'Annuler'), ok));
+    dlg.addEventListener('close', () => { dlg.remove(); resolve(confirmed); });
+    document.body.append(dlg);
+    dlg.showModal();
+    ok.focus();
+  });
+}
+
 function changePinDialog() {
   const oldPin = h('input', { type: 'password', inputmode: 'numeric', maxlength: 8, autocomplete: 'current-password' });
   const newPin = h('input', { type: 'password', inputmode: 'numeric', maxlength: 8, autocomplete: 'new-password' });
@@ -213,10 +229,10 @@ function changePinDialog() {
 }
 
 function rulesDialog(intro) {
-  const close = h('button.primary', { type: 'button', onclick: () => dlg.close() }, intro ? 'C\'est parti !' : 'Fermer');
+  const close = h('button.primary', { type: 'button', onclick: () => dlg.close() }, intro ? 'Commencer à jouer' : 'Fermer');
   const dlg = h('dialog.card.rules',
     h('h2', 'Règles du jeu'),
-    intro ? h('p.intro', 'La partie commence ! Voici l\'essentiel des règles. Vous pourrez les revoir à tout moment avec le bouton « Règles » en haut de l\'écran.') : null,
+    intro ? h('p.intro', 'La partie commence. Voici l\'essentiel des règles. Vous pourrez les revoir à tout moment avec le bouton « Règles » en haut de l\'écran.') : null,
     RULES.map((s) => h('section',
       h('h3', s.title),
       s.body.map((b) => Array.isArray(b) ? h('ul', b.map((li) => h('li', li))) : h('p', b)))),
@@ -384,7 +400,7 @@ function renderGame() {
 
   const banner = v.game.status === 'finished'
     ? h('div.banner', v.game.result === 'DRAW' ? 'Partie terminée : match nul.'
-      : S.map.powerNames[v.game.result] ? `Partie terminée : victoire de ${S.map.powerNames[v.game.result]} !` : 'Partie terminée.')
+      : S.map.powerNames[v.game.result] ? `Partie terminée : victoire de ${S.map.powerNames[v.game.result]}.` : 'Partie terminée.')
     : null;
 
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -488,13 +504,16 @@ function renderWaitingRoom() {
         v.game.isCreator ? h('button.primary', {
           onclick: async () => {
             const missing = 7 - v.players.length;
-            if (missing > 0 && !confirm(`${missing} puissance(s) sans joueur resteront en désordre civil (leurs unités tiennent leur position). Lancer quand même ?`)) return;
+            if (missing > 0 && !await confirmDialog(`${missing} puissance(s) sans joueur resteront en désordre civil (leurs unités tiennent leur position). Lancer quand même ?`, 'Lancer la partie')) return;
             try { await api('POST', `/api/games/${S.gameId}/start`, {}); refreshGame(true); } catch (err) { toast(err.message, 'error'); }
           },
         }, 'Lancer la partie') : null,
         joined ? h('button.danger', {
           onclick: async () => {
-            if (!confirm(v.game.isCreator ? 'Supprimer cette partie ?' : 'Quitter cette partie ?')) return;
+            const ok = v.game.isCreator
+              ? await confirmDialog('Supprimer cette partie ?', 'Supprimer', true)
+              : await confirmDialog('Quitter cette partie ?', 'Quitter', true);
+            if (!ok) return;
             await api('POST', `/api/games/${S.gameId}/leave`, {});
             location.hash = '#/';
           },
@@ -976,7 +995,7 @@ function renderPlayers() {
       }, me.drawVote ? 'Retirer mon vote de match nul' : 'Proposer un match nul'),
       v.game.isCreator ? h('button.danger', {
         onclick: async () => {
-          if (!confirm('Résoudre la phase maintenant, sans attendre les ordres manquants ?')) return;
+          if (!await confirmDialog('Résoudre la phase maintenant, sans attendre les ordres manquants ?', 'Forcer la résolution', true)) return;
           try { await api('POST', `/api/games/${S.gameId}/resolve`, {}); refreshGame(true); } catch (err) { toast(err.message, 'error'); }
         },
       }, 'Forcer la résolution') : null) : null,

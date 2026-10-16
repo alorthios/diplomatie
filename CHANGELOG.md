@@ -15,6 +15,19 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le pr
 
 - La carte n'affiche plus le graphe de liaisons entre provinces.
 - Le navigateur revalide les fichiers de l'interface à chaque chargement : une mise à jour est visible immédiatement, sans vider le cache.
+- Finitions de l'interface :
+  - polices Fraunces (titres) et Geist (texte), servies par l'application ;
+  - fond légèrement grainé, ombres teintées, chiffres à chasse fixe dans le compte à rebours et les tableaux ;
+  - retours visuels au survol et au clic sur les boutons, les liens et les cartes de puissance.
+- Les confirmations (lancer, supprimer ou quitter une partie, forcer la résolution) s'affichent dans une boîte de dialogue de l'interface, et non plus dans la fenêtre native du navigateur.
+
+### Corrigé
+
+- La carte de la puissance choisie dans le salon perdait sa mise en forme : le nom du joueur était collé au nom de la puissance.
+- L'ordre sélectionné perdait sa mise en page en deux colonnes.
+- Le message d'état des ordres (« Ordres enregistrés… ») s'affichait en grand.
+- Le toast vide dépassait en bas de l'écran.
+- Les boîtes de dialogue (code PIN, confirmations) s'affichaient en bas de l'écran au lieu d'être centrées.
 
 ## [0.1.0] - 2026-10-15
 
