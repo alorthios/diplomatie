@@ -15,10 +15,11 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le pr
 
 - La carte n'affiche plus le graphe de liaisons entre provinces.
 - Le navigateur revalide les fichiers de l'interface à chaque chargement : une mise à jour est visible immédiatement, sans vider le cache.
-- Finitions de l'interface :
-  - polices Fraunces (titres) et Geist (texte), servies par l'application ;
-  - fond légèrement grainé, ombres teintées, chiffres à chasse fixe dans le compte à rebours et les tableaux ;
-  - retours visuels au survol et au clic sur les boutons, les liens et les cartes de puissance.
+- Nouvelle interface :
+  - surfaces graphite et ardoise, un seul accent ambre, thèmes clair et sombre ;
+  - polices Geist et Geist Mono, servies par l'application ;
+  - page de connexion sur fond de carte de 1901 ;
+  - liste des parties, onglets de partie, cartes de puissance et messages redessinés.
 - Les confirmations (lancer, supprimer ou quitter une partie, forcer la résolution) s'affichent dans une boîte de dialogue de l'interface, et non plus dans la fenêtre native du navigateur.
 
 ### Corrigé

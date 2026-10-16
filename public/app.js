@@ -117,8 +117,8 @@ async function route() {
     S.version = r.version;
   }
   renderNav();
+  if (!S.map) S.map = await api('GET', '/api/map'); // publique : sert aussi de décor à la connexion
   if (!S.me) return renderLogin();
-  if (!S.map) S.map = await api('GET', '/api/map');
   const m = location.hash.match(/^#\/game\/(\d+)/);
   if (m) return openGame(Number(m[1]));
   return renderLobby();
@@ -133,8 +133,9 @@ function showFatal(err) {
 function renderNav() {
   $nav.replaceChildren(h('button.link', { onclick: () => rulesDialog() }, 'Règles'));
   if (!S.me) return;
+  $nav.prepend(h('span.userchip', { title: `Connecté en tant que ${S.me.pseudo}` },
+    h('span.avatar', S.me.pseudo.slice(0, 1).toUpperCase()), h('span.pseudo', S.me.pseudo)));
   $nav.append(
-    h('span.muted', S.me.pseudo),
     h('button.link', { onclick: changePinDialog }, 'PIN'),
     h('button.link', {
       onclick: async () => {
@@ -158,8 +159,10 @@ function renderLogin() {
   const submit = h('button.primary', { type: 'submit' }, 'Se connecter');
   const switcher = h('button.link', { type: 'button' }, 'Créer un compte');
   const hint = h('p.muted.small', 'Le code PIN contient 4 à 8 chiffres.');
+  const title = h('h2', 'Connexion');
   switcher.addEventListener('click', () => {
     mode = mode === 'login' ? 'register' : 'login';
+    title.textContent = mode === 'login' ? 'Connexion' : 'Nouveau compte';
     submit.textContent = mode === 'login' ? 'Se connecter' : 'Créer mon compte';
     switcher.textContent = mode === 'login' ? 'Créer un compte' : 'J\'ai déjà un compte';
     pin.autocomplete = mode === 'login' ? 'current-password' : 'new-password';
@@ -179,14 +182,34 @@ function renderLogin() {
       }
     },
   },
-  h('h1', 'Diplomatie'),
-  h('p.muted', 'Europe, 1901. Sept puissances, aucune chance, toutes les trahisons.'),
+  title,
+  h('p.muted.small', 'Un pseudo et un code PIN suffisent.'),
   h('label', { for: 'pseudo' }, 'Pseudo'), pseudo,
   h('label', { for: 'pin' }, 'Code PIN'), pin,
   hint,
   submit,
-  S.registration ? switcher : null);
-  $app.replaceChildren(form);
+  S.registration ? switcher : null,
+  h('div.stats',
+    h('div', h('strong', '7'), h('span', 'puissances')),
+    h('div', h('strong', '34'), h('span', 'centres')),
+    h('div', h('strong', '0'), h('span', 'dé'))));
+
+  // Décor : la carte de 1901, chaque puissance sur ses centres d'origine
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.classList.add('map');
+  svg.setAttribute('aria-hidden', 'true');
+  const centers = {};
+  for (const [pw, list] of Object.entries(S.map.homeCenters)) for (const c of list) centers[c] = pw;
+  renderMap(svg, S.map, { units: [], dislodged: [], centers }, {});
+
+  $app.replaceChildren(h('div.auth',
+    h('div.auth-hero',
+      h('div.map-frame', svg),
+      h('div.auth-copy', h('div.auth-copy-panel',
+        h('p.kicker', 'Europe · 1901'),
+        h('h1', 'Diplomatie'),
+        h('p', 'Sept puissances, aucun hasard. Seuls comptent vos ordres et vos alliances.')))),
+    form));
   pseudo.focus();
 }
 
@@ -268,10 +291,11 @@ async function renderLobby() {
   const done = games.filter((g) => g.status === 'finished');
 
   const section = (title, list, empty) => h('section.card',
-    h('h2', title),
+    h('h2', title, list.length ? h('span.count', list.length) : null),
     list.length ? h('ul.gamelist', list.map(gameItem)) : h('p.muted', empty));
 
   $app.replaceChildren(
+    h('header.pagehead', h('div', h('p.kicker', `Bonjour, ${S.me.pseudo}`), h('h1', 'Vos parties'))),
     h('div.lobby',
       h('div.lobby-main',
         section('Mes parties', mine, 'Vous ne participez à aucune partie en cours.'),
@@ -287,10 +311,13 @@ function gameItem(g) {
   const status = g.status === 'lobby' ? `Salon · ${g.player_count}/7 joueurs`
     : g.status === 'active' ? `${phaseShort(g.phase)}${g.deadline ? ` · échéance ${new Date(g.deadline).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}` : ''}`
       : g.result === 'DRAW' ? 'Match nul' : g.result && S.map.powerNames[g.result] ? `Victoire : ${S.map.powerNames[g.result]}` : 'Terminée';
-  return h('li', h('a', { href: `#/game/${g.id}` },
+  return h('li', h('a', { href: `#/game/${g.id}`, 'data-power': g.my_power || null },
+    h('span.gbar'),
     h('span.gname', g.name),
-    g.my_power ? h('span.badge', { 'data-power': g.my_power }, S.map.powerNames[g.my_power]) : null,
-    h('span.muted.small', status)));
+    h('span.gmeta', status),
+    h('span.gside',
+      g.my_power ? h('span.badge', { 'data-power': g.my_power }, S.map.powerNames[g.my_power]) : null,
+      h('span.arrow-go', { 'aria-hidden': 'true' }, '→'))));
 }
 
 function phaseShort(name) {
@@ -319,7 +346,7 @@ function createGameForm(presets) {
   h('label', 'Nom'), name,
   h('label', 'Ma puissance'), power,
   h('label', 'Durée des phases'), duration,
-  h('p.muted.small', 'Une phase est résolue dès que tous les joueurs sont prêts, ou à l\'échéance.'),
+  h('p.hint', 'Une phase est résolue dès que tous les joueurs sont prêts, ou à l\'échéance.'),
   h('label', 'Négociations'), press,
   h('button.primary', { type: 'submit' }, 'Créer la partie'));
 }
@@ -387,11 +414,11 @@ function renderGame() {
     h('div',
       h('a.back', { href: '#/' }, '← Parties'),
       h('h1', v.game.name),
-      h('p.muted.small', durationLabel(v.game.phaseMinutes), ' · ', PRESS_LABEL[v.game.press])),
+      h('p.meta', durationLabel(v.game.phaseMinutes), ' · ', PRESS_LABEL[v.game.press])),
     v.phase ? h('div.phasebox',
       h('div.phase-label', S.history ? `Historique : ${S.history.label}` : v.phase.label),
       h('div.countdown', { id: 'countdown' }),
-      v.me && v.me.power ? h('div', h('span.badge', { 'data-power': v.me.power }, S.map.powerNames[v.me.power])) : null) : null);
+      v.me && v.me.power ? h('span.badge', { 'data-power': v.me.power }, S.map.powerNames[v.me.power]) : null) : null);
 
   if (v.game.status === 'lobby') {
     $app.replaceChildren(head, renderWaitingRoom());
@@ -444,7 +471,7 @@ function restoreMapScroll(previous) {
 function mapLegend() {
   return h('div.legend', S.map.powers.map((p) => h('span.legend-item',
     h('span.swatch', { 'data-power': p }), S.map.powerNames[p],
-    ` (${Object.values((S.history || S.view.phase).state.centers).filter((x) => x === p).length})`)));
+    h('span.n', Object.values((S.history || S.view.phase).state.centers).filter((x) => x === p).length))));
 }
 
 function renderPlayersBadge() {
@@ -494,7 +521,7 @@ function renderWaitingRoom() {
   const random = v.players.filter((p) => !p.power);
   return h('div.waiting',
     h('section.card',
-      h('h2', `Salon — ${v.players.length}/7 joueurs`),
+      h('h2', 'Salon', h('span.count', `${v.players.length}/7`)),
       h('p.muted', 'Choisissez une puissance, ou laissez le hasard décider au lancement.'),
       grid,
       random.length ? h('p.small', 'Au hasard : ', random.map((p) => p.pseudo).join(', ')) : null,
@@ -772,7 +799,7 @@ function renderOrders() {
   else body = renderAdjustmentOrders(state);
 
   const ready = v.myOrders && v.myOrders.ready;
-  const status = h('p.small', { class: ready ? 'ok' : 'muted' },
+  const status = h('p.status', { class: ready ? 'ok' : 'muted' },
     ready ? '✓ Vous êtes prêt. Vous pouvez encore modifier vos ordres jusqu\'à la résolution.'
       : S.dirty ? 'Modifications non enregistrées.' : 'Ordres enregistrés, pas encore prêt.');
   const actions = h('div.row.sticky-actions',
@@ -866,7 +893,7 @@ function renderMovementOrders(state) {
       h('div.orderfields', parts));
   });
   return h('div',
-    h('p.muted.small', 'Astuce : touchez une unité sur la carte, puis sa destination.'),
+    h('p.tip', 'Touchez une unité sur la carte, puis sa destination.'),
     rows);
 }
 
