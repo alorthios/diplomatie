@@ -15,6 +15,20 @@ Le format suit [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) et le pr
 
 - La carte n'affiche plus le graphe de liaisons entre provinces.
 - Le navigateur revalide les fichiers de l'interface à chaque chargement : une mise à jour est visible immédiatement, sans vider le cache.
+- Nouvelle interface :
+  - surfaces graphite et ardoise, un seul accent ambre, thèmes clair et sombre ;
+  - polices Geist et Geist Mono, servies par l'application ;
+  - page de connexion sur fond de carte de 1901 ;
+  - liste des parties, onglets de partie, cartes de puissance et messages redessinés.
+- Les confirmations (lancer, supprimer ou quitter une partie, forcer la résolution) s'affichent dans une boîte de dialogue de l'interface, et non plus dans la fenêtre native du navigateur.
+
+### Corrigé
+
+- La carte de la puissance choisie dans le salon perdait sa mise en forme : le nom du joueur était collé au nom de la puissance.
+- L'ordre sélectionné perdait sa mise en page en deux colonnes.
+- Le message d'état des ordres (« Ordres enregistrés… ») s'affichait en grand.
+- Le toast vide dépassait en bas de l'écran.
+- Les boîtes de dialogue (code PIN, confirmations) s'affichaient en bas de l'écran au lieu d'être centrées.
 
 ## [0.1.0] - 2026-10-15
 
